@@ -11,7 +11,7 @@
 7) Download CSV klicken
 8) CSV-Datei im Ordner des Scripts ablegen
 
-![GrafanaExport](.\pictures\GrafanaExport.gif)
+![GrafanaExport](./pictures/GrafanaExport.gif)
 
 ## Script ausführen
 
