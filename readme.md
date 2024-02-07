@@ -26,3 +26,7 @@
     .\Erstelle-Ladebericht.ps1 -CSVPath '.\CSV-Datei'
     ```
 Der Ladebericht liegt nun als Excel im gleichen Ordner wie die CSV-Datei
+
+## Ladebericht
+
+![Ladebericht](./Pictures/Bericht.png)
