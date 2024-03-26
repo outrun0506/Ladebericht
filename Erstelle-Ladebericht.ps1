@@ -19,12 +19,22 @@ $Mitarbeiter = $parameter.Mitarbeiter
 $Culture = [cultureinfo]::GetCultureInfo('de-AT')
 
 # CSV Importieren
-$Ladungen = Import-Csv -Path $CSVPath
+$Ladungen = Import-Csv -Path ".\maerz2024.csv"
+
 
 # Prüfung ob es leere Elemente bei den geladenen kWh gibt
 $Ladungen | ForEach-Object {
     if ($_.used -eq "") {
         Write-Error "CSV enthält leere Werte bei Ladungen, bitte das CSV kontrollieren. Aufgabe wird abgebrochen"
+        Start-Sleep -Seconds 60
+        Exit
+    }
+}
+
+# Prüfung ob es Wh Ladungen gibt, anstatt kWh
+$Ladungen | ForEach-Object {
+    if ($_.used -like "* Wh") {
+        Write-Error "CSV enthält Werte mit Wh, bitte auf kWh ändern - ACHTUNG als Trennzeichen bitte . verwenden"
         Start-Sleep -Seconds 60
         Exit
     }
@@ -37,7 +47,7 @@ $Ladungen | ForEach-Object {
 }
 
 #Monat finden
-$datum = $Ladungen.date[0].Substring(0,  $ladungen.date[0].length - 10)
+$datum = $Ladungen[0].date.Substring(0,  $ladungen[0].date.length - 10)
 $datum = $datum.ToDateTime($Culture)
 $berichtsmonat = (Get-Culture).DateTimeFormat.GetMonthName(($datum.Month))
 $Jahr = Get-Date -Format yyyy
@@ -47,7 +57,7 @@ $stub = $Ladungen | Select-Object Date, End_date, Location, Used
 #CSV Manipulieren
 $stub | ForEach-Object {
     $_ | Add-Member -Type NoteProperty -Name 'Kennzeichen' -Value $Kennzeichen
-    $Kosten = [int]$_.used.replace(",",".") * $BetragkWh
+    $Kosten = [decimal]$_.used.replace(",",".") * $BetragkWh
     $gesamtkosten = $gesamtkosten + $Kosten
     $_ | Add-Member -Type NoteProperty -Name 'Kosten' -Value $Kosten
 }
